@@ -31,7 +31,7 @@ class App {
         }
     }
     public function setSiteName() {
-        print_r($this -> config);
+        
     }
 }
 
