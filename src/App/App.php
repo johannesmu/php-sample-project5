@@ -12,6 +12,8 @@ class App {
     public function __construct()
     {
         $this -> loadConfig();
+        $this -> setAppMode();
+        $this -> setSiteName();
     }
     private function loadConfig() 
     {
@@ -22,16 +24,41 @@ class App {
         try {
             // try to load the .env file
             $this -> config -> load();
-            $this -> setSiteName();
         }
         catch( Exception $exc ) {
             // there is an error loading the .env file
             error_log( $exc -> getMessage() );
-            echo "something went wrong";
+            $this -> killApp("Configuration file is missing");
         }
     }
-    public function setSiteName() {
-        
+    private function setSiteName() {
+        try {
+            if( $_ENV['SITENAME'] ) {
+                $this -> sitename = $_ENV['SITENAME'];
+            }
+            else  {
+                throw new Exception("value not available");
+            }
+        }
+        catch( Exception $exc ) {
+            error_log($exc -> getMessage() );
+        }
+    }
+    private function setAppMode() 
+    {
+        try {
+            $site_mode = $_ENV['MODE'];
+            if( !$site_mode ) {
+                throw new Exception("mode is not specified");
+            }
+        }
+        catch( Exception $exc ) {
+            error_log( $exc -> getMessage() );
+            $this -> killApp("running mode not set");
+        }
+    }
+    private function killApp( $msg ) {
+        exit($msg);
     }
 }
 
